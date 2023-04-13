@@ -9,7 +9,7 @@ const url = "http://127.0.0.1:8000/api/task"
 
 const Tables = () => {
 
-    git init    return (
+     return (
     <DefaultLayout>
       <Breadcrumb pageName='Tarefas' />
 
