@@ -7,10 +7,7 @@ const FormElements = () => {
     // Variavel que Recebe os Digitados do Form através do OnChange.
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('');
-    const [user_create] = useState('Claudio Gomes');
-    const [user_responsible] = useState('Claudio Gomes');
-    const [status] = useState('Nova');
-    const [user_update] = useState('Claudio Gomes');
+    const [status] = useState('A Fazer');
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -19,10 +16,7 @@ const FormElements = () => {
         const data = {
             title: title,
             subject: subject,
-            user_create: user_create,
-            user_responsible: user_responsible,
             status: status,
-            user_update: user_update,
         };
 
         // Enviando Requisição

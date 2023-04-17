@@ -117,7 +117,7 @@ const [tasks, setTask] = useState([])
 
               {task.status === 'A Fazer' ? <p className='inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary'>{task.status}</p>:
                   task.status === 'Concluida' ? <p className='inline-flex rounded-full bg-success  bg-opacity-10 py-1 px-3 text-sm font-medium text-success '>{task.status}</p>:(
-                  <p className='inline-flex rounded-full bg-light bg-opacity-10 py-1 px-3 text-sm font-medium text-light'>{task.status}</p>
+                  <p className='inline-flex rounded-full bg-light bg-opacity-10 py-1 px-3 text-sm font-medium text-light'>Sem Status</p>
               )}
 
             </td>
