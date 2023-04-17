@@ -1,113 +1,95 @@
-import React, { useState, useRef, useEffect } from 'react'
-import userSeven from '../images/user/user-07.png'
-import userEight from '../images/user/user-08.png'
-import userNine from '../images/user/user-09.png'
-import userTen from '../images/user/user-10.png'
-import TaskPopup from './TaskPopup';
+import React, { useState } from 'react';
 
 const TaskHeader = () => {
-  const [popupOpen, setPopupOpen] = useState(false);
+  const [items, setItems] = useState([
+    { id: 1, nome: 'João' },
+    { id: 2, nome: 'Maria' },
+    // Outros itens do grid
+  ]);
 
-  const trigger = useRef(null)
-  const popup = useRef(null)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [itemIdToUpdate, setItemIdToUpdate] = useState(null);
+  const [nomeInput, setNomeInput] = useState('');
 
-  // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }) => {
-      if (!popup.current) return
-      if (
-        !popupOpen ||
-        popup.current.contains(target) ||
-        trigger.current.contains(target)
-      )
-        return
-      setPopupOpen(false)
-    }
-    document.addEventListener('click', clickHandler)
-    return () => document.removeEventListener('click', clickHandler)
-  })
+  // Função para abrir o modal com o ID do item a ser atualizado
+  const openModal = (itemId) => {
+    // Recuperar o nome atual do item a partir do grid usando o ID
+    const nome = getNomeDoItem(itemId);
 
-  // close if the esc key is pressed
-  useEffect(() => {
-    const keyHandler = ({ keyCode }) => {
-      if (!popupOpen || keyCode !== 27) return
-      setPopupOpen(false)
-    }
-    document.addEventListener('keydown', keyHandler)
-    return () => document.removeEventListener('keydown', keyHandler)
-  })
+    // Atualizar o estado com as informações do item e abrir o modal
+    setItemIdToUpdate(itemId);
+    setNomeInput(nome);
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const closeModal = () => {
+    // Limpar o estado e fechar o modal
+    setItemIdToUpdate(null);
+    setNomeInput('');
+    setModalOpen(false);
+  };
+
+  // Função para atualizar o item
+  const updateItem = () => {
+    // Realizar a requisição PUT para a API, informando o ID e o novo nome
+    const itemId = itemIdToUpdate;
+    const novoNome = nomeInput;
+    // Fazer a requisição PUT para a API com o ID e o novo nome
+
+    // Atualizar o estado com as informações atualizadas do item
+    setItems(prevItems =>
+        prevItems.map(item =>
+            item.id === itemId ? { ...item, nome: novoNome } : item
+        )
+    );
+
+    // Fechar o modal
+    closeModal();
+  };
+
+  // Função auxiliar para obter o nome do item pelo ID
+  const getNomeDoItem = (itemId) => {
+    const item = items.find(item => item.id === itemId);
+    return item ? item.nome : '';
+  };
 
   return (
-    <div className='flex flex-col gap-y-4 rounded-sm border border-stroke bg-white p-3 shadow-default dark:border-strokedark dark:bg-boxdark sm:flex-row sm:items-center sm:justify-between'>
       <div>
-        <h3 className='text-title-lg font-semibold text-black dark:text-white pl-2'>
-          Tasks
-        </h3>
-      </div>
-      <div className='flex flex-col gap-4 2xsm:flex-row 2xsm:items-center'>
-        <div className='flex -space-x-2'>
-          <button className='h-9 w-9 rounded-full border-2 border-white dark:border-boxdark'>
-            <img src={userSeven} alt='User' />
-          </button>
-          <button className='h-9 w-9 rounded-full border-2 border-white dark:border-boxdark'>
-            <img src={userEight} alt='User' />
-          </button>
-          <button className='h-9 w-9 rounded-full border-2 border-white dark:border-boxdark'>
-            <img src={userNine} alt='User' />
-          </button>
-          <button className='h-9 w-9 rounded-full border-2 border-white dark:border-boxdark'>
-            <img src={userTen} alt='User' />
-          </button>
-          <button className='flex h-9 w-9 items-center justify-center rounded-full border border-stroke bg-white text-primary dark:border-strokedark dark:bg-[#4f5e77] dark:text-white'>
-            <svg
-              className='fill-current'
-              width='16'
-              height='16'
-              viewBox='0 0 16 16'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                d='M15 7H9V1C9 0.4 8.6 0 8 0C7.4 0 7 0.4 7 1V7H1C0.4 7 0 7.4 0 8C0 8.6 0.4 9 1 9H7V15C7 15.6 7.4 16 8 16C8.6 16 9 15.6 9 15V9H15C15.6 9 16 8.6 16 8C16 7.4 15.6 7 15 7Z'
-                fill=''
-              />
-            </svg>
-          </button>
+        {/* Grid */}
+        <div id="grid">
+          {/* Itens do grid */}
+          {/* Exemplo de item com botão de atualizar */}
+          {items.map(item => (
+              <div key={item.id} className="grid-item">
+                <span>ID: {item.id}</span>
+                <span>Nome: {item.nome}</span>
+                <button onClick={() => openModal(item.id)}>Editar</button>
+              </div>
+          ))}
+          {/* Outros itens do grid */}
         </div>
 
-        <div>
-          <button
-            ref={trigger}
-            onClick={() => setPopupOpen(!popupOpen)}
-            className='flex items-center gap-2 rounded bg-primary py-2 px-4.5 font-medium text-white hover:bg-opacity-80'
-          >
-            <svg
-              className='fill-current'
-              width='16'
-              height='16'
-              viewBox='0 0 16 16'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                d='M15 7H9V1C9 0.4 8.6 0 8 0C7.4 0 7 0.4 7 1V7H1C0.4 7 0 7.4 0 8C0 8.6 0.4 9 1 9H7V15C7 15.6 7.4 16 8 16C8.6 16 9 15.6 9 15V9H15C15.6 9 16 8.6 16 8C16 7.4 15.6 7 15 7Z'
-                fill=''
-              />
-            </svg>
-            Add task
-          </button>
-
-          {/* <!-- ===== Task Popup Start ===== --> */}
-          <TaskPopup
-            popupOpen={popupOpen}
-            setPopupOpen={setPopupOpen}
-            popup={popup}
-          />
-          {/* <!-- ===== Task Popup End ===== --> */}
-        </div>
+        {/* Modal */}
+        {modalOpen && (
+            <div id="modal" className="modal">
+              <div className="modal-content">
+                <h2>Editar Item</h2>
+                <form onSubmit={updateItem}>
+                  <input
+                      type="text"
+                      id="nomeInput"
+                      placeholder="Nome"
+                      value={nomeInput}
+                      onChange={(e) => setNomeInput(e.target.value)}
+                  />
+                  <button type="submit">Atualizar</button>
+                  <button onClick={closeModal}>Fechar</button>
+                </form>
+              </div>
+            </div>
+        )}
       </div>
-    </div>
-  )
-}
-
+  );
+};
 export default TaskHeader;

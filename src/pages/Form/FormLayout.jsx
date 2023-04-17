@@ -1,88 +1,103 @@
-import React from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import Breadcrumb from '../../components/Breadcrumb';
+import React, {useEffect, useState} from "react";
+import axios from "axios";
+import {useParams} from "react-router-dom";
+import DefaultLayout from '../../layout/DefaultLayout.jsx';
+
 
 const FormLayout = () => {
-  return (
-    <DefaultLayout>
-      <Breadcrumb pageName='Cadastrar Tarefa' />
 
-      <div className='grid grid-cols-1 gap-9 sm:grid-cols-14'>
-        <div className='flex flex-col gap-9'>
-          {/* <!-- Contact Form --> */}
-          <div className='rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark'>
-            <div className='border-b border-stroke py-4 px-6.5 dark:border-strokedark'>
-              <h3 className='font-medium text-black dark:text-white'>
-                Insira os Dados
-              </h3>
+    const [tasks, setTask] = useState([])
+
+    const {id} = useParams()
+
+    useEffect(() => {
+
+        axios
+            .get(`http://127.0.0.1:8000/api/task/${id}`)
+            .then(function(response) {
+                console.log(response.data);
+                setTask(response.data.data)
+            })
+            .catch(function(error) {
+                console.error('Erro ao excluir item:', error);
+            });
+     },[id])
+
+
+    // Variavel que Recebe os Digitados do Form através do OnChange.
+    const [title, setTitle] = useState('');
+    const [subject, setSubject] = useState('');
+
+
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+
+
+        // Enviando Requisição
+        axios
+            .put(`http://127.0.0.1:8000/api/task/${id}?title=${title}&subject=${subject}`)
+            .then(function(response) {
+                console.log('Formulário enviado com sucesso:', response.data);
+                window.location.href = "http://localhost:5173/tables";
+
+            })
+            .catch(function(error) {
+                console.error('Erro ao enviar formulário:', error);
+            });
+    };
+
+
+    return(
+        <DefaultLayout>
+        <div className='grid grid-cols-1 gap-9 sm:grid-cols-14'>
+            <div className='flex flex-col gap-9'>
+                <div className='rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark'>
+                    <div className='border-b border-stroke py-4 px-6.5 dark:border-strokedark'>
+                        <h3 className='font-medium text-black dark:text-white'>
+                            Insira os Dados
+                        </h3>
+                    </div>
+                    <form onSubmit={handleSubmit} action='#'>
+                        <div className='p-6.5'>
+
+                            <div className='mb-4.5'>
+                                <label className='mb-2.5 block text-black dark:text-white'>
+                                    Titulo
+                                </label>
+                                <input
+
+                                    type='text'
+                                    placeholder={tasks.title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                                />
+                            </div>
+
+                            <div className='mb-4.5'>
+                                <label className='mb-2.5 block text-black dark:text-white'>
+                                    Assunto
+                                </label>
+                                <input
+                                    type='text'
+                                    placeholder={tasks.subject}
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className='flex w-full justify-center rounded bg-primary p-3 font-medium text-gray'>
+                                Atualizar Tarefa
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form action='#'>
-              <div className='p-6.5'>
-
-                <div className='mb-4.5'>
-                  <label className='mb-2.5 block text-black dark:text-white'>
-                    Titulo <span className='text-meta-1'>*</span>
-                  </label>
-                  <input
-                    type='email'
-                    placeholder='Insira o Titulo da Tarefa'
-                    className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                  />
-                </div>
-
-                <div className='mb-4.5'>
-                  <label className='mb-2.5 block text-black dark:text-white'>
-                    Assunto
-                  </label>
-                  <input
-                    type='text'
-                    placeholder='Selecione o Assunto da Tarefa'
-                    className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                  />
-                </div>
-
-                <div className='mb-4.5'>
-                  <label className='mb-2.5 block text-black dark:text-white'>
-                    Status
-                  </label>
-                  <div className='relative z-20 bg-transparent dark:bg-form-input'>
-                    <select className='relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'>
-                      <option value=''>A Fazer</option>
-                      <option value=''>Em andamento</option>
-                      <option value=''>Concluido</option>
-                    </select>
-                    <span className='absolute top-1/2 right-4 z-30 -translate-y-1/2'>
-                      <svg
-                        className='fill-current'
-                        width='24'
-                        height='24'
-                        viewBox='0 0 24 24'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                      >
-                        <g opacity='0.8'>
-                          <path
-                            fillRule='evenodd'
-                            clipRule='evenodd'
-                            d='M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z'
-                            fill=''
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-
-                <button className='flex w-full justify-center rounded bg-primary p-3 font-medium text-gray'>
-                  Cadastrar Tarefa
-                </button>
-              </div>
-            </form>
-          </div>
         </div>
-      </div>
-    </DefaultLayout>
-  )
+        </DefaultLayout>
+    )
 }
 
 export default FormLayout;
